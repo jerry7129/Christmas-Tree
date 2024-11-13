@@ -1,9 +1,11 @@
 import React, {useState} from 'react'
+import {useAuth} from './context/AuthContext'
 import {useNavigate} from 'react-router-dom'
 import {TiThMenu} from 'react-icons/ti'
 
 export default function CustomTree() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false) // 로그인 여부
+  const {user, isLoggedIn} = useAuth()
+  //const [isLoggedIn, setIsLoggedIn] = useState(false) // 로그인 여부
   const [showMenu, setShowMenu] = useState(false) // 메뉴 표시 여부
   const [treeName, setTreeName] = useState('') // 트리 이름
   const [treeColor, setTreeColor] = useState('red') // 기본 트리 색상
@@ -22,6 +24,13 @@ export default function CustomTree() {
     alert(`변경사항이 저장되었습니다: 트리 이름 "${treeName}", 색상 "${treeColor}"`)
     // 여기에 저장 로직을 추가하세요.
   }
+
+  React.useEffect(() => {
+    if (!isLoggedIn) {
+      alert('로그인이 필요합니다.')
+      navigate('/')
+    }
+  }, [isLoggedIn, navigate])
 
   return (
     <div className="page">

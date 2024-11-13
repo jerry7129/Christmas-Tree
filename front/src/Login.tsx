@@ -1,9 +1,12 @@
 import React, {useState, useEffect} from 'react'
+import {useAuth} from './context/AuthContext'
 import {useNavigate} from 'react-router-dom'
 import {AiFillEye, AiFillEyeInvisible} from 'react-icons/ai'
 
 export default function Login() {
   const navigate = useNavigate()
+
+  const {login} = useAuth()
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -37,8 +40,13 @@ export default function Login() {
 
   // 로그인 버튼 클릭 시 처리 함수
   const handleLogin = () => {
-    if (username === registeredUser.username && password === registeredUser.password) {
+    if (
+      /*username === registeredUser.username && password === registeredUser.password*/
+      username
+    ) {
       alert('로그인 성공!')
+      login(username)
+      navigate('/customtree')
     } else {
       alert('알맞는 회원 정보가 없습니다.')
     }
