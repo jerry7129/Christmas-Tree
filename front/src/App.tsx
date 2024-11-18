@@ -1,10 +1,10 @@
 import React from 'react'
-import {AuthProvider} from './context/AuthContext.tsx'
+import {AuthProvider} from './context/AuthContext'
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
-import Login from './Login.tsx'
-import Signup from './Signup.tsx'
-import CustomTree from './CustomTree.tsx'
-import WriteLetter from './WriteLetter.tsx'
+import Login from './Login'
+import Signup from './Signup'
+import CustomTree from './CustomTree'
+import WriteLetter from './WriteLetter'
 
 function App() {
   return (

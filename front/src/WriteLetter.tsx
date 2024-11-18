@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import {TiThMenu} from 'react-icons/ti'
 import {useNavigate} from 'react-router-dom'
 
-export default function WriteLetter({treeName, treeColor}) {
+export default function WriteLetter(treeName: string, treeColor: string) {
   const [showMenu, setShowMenu] = useState(false)
   const [showNotepad, setShowNotepad] = useState(false)
   const [letter, setLetter] = useState('')

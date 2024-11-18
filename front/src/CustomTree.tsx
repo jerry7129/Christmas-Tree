@@ -16,7 +16,7 @@ export default function CustomTree() {
     setShowMenu(prev => !prev)
   }
 
-  const handleColorChange = color => {
+  const handleColorChange = (color: string) => {
     setTreeColor(color) // 트리 색상 변경
   }
 
