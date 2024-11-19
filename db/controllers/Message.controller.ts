@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction, RequestHandler } from "express";
+import { Request, Response } from "express";
 import Message from "../models/Message";
 
 const MessageController = {
-  createMessage: async (req: Request, res: Response, next: NextFunction) => {
+  createMessage: async (req: Request, res: Response) => {
     try {
       const { name, message, decorationType, isPrivate } = req.body;
       const newMessage = new Message({
@@ -12,14 +12,14 @@ const MessageController = {
         isPrivate,
       });
       await newMessage.save();
-      res.status(200).json({ status: "success", data: newMessage });
+      res.status(201).json({ status: "success", data: newMessage });
     } catch (error) {
       res.status(400).json({ status: "fail", error });
       // next(error);
     }
   },
 
-  getMessage: async (req: Request, res: Response, next: NextFunction) => {
+  getMessage: async (req: Request, res: Response) => {
     try {
       const messages = await Message.find();
       res.status(200).json({ status: "success", data: messages });
