@@ -1,10 +1,10 @@
 import express from "express";
-import messageApi from "./Message.api";
-import authApi from "./Auth.api.";
+import AuthApi from "./Auth.api.";
+import MyDataApi from "./MyData.api";
 
 const router = express.Router();
 
-router.use("/messages", messageApi);
-router.use("/auth", authApi);
+router.use("/auth", AuthApi);
+router.use("/mydata", MyDataApi);
 
 export default router;
