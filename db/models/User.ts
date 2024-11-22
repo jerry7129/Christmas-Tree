@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface ILetter extends Document {
-  name: string;
+  sender: string;
   content: string;
   decorationType: string;
   isPrivate: boolean;
@@ -19,7 +19,7 @@ export interface IUser extends Document {
 
 const LetterSchema: Schema = new Schema(
   {
-    name: { type: String, required: true },
+    sender: { type: String, required: true },
     content: { type: String, required: true },
     decorationType: { type: String, required: true },
     isPrivate: { type: Boolean, required: true, default: false },
