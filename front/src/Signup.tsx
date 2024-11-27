@@ -13,6 +13,47 @@ export default function Signup() {
 
   const [hide, setHide] = useState<Array<boolean>>([true, true])
 
+  // 회원가입 요청 함수
+  const signup = async (username: string, password: string) => {
+    const response = await fetch('http://localhost:5000/api/auth/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({username, password})
+    })
+
+    console.log('응답 상태:', response.status)
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.message)
+    }
+
+    return await response.json()
+  }
+
+  // 회원가입 버튼 클릭 시 처리 함수
+  const handleSignup = async () => {
+    if (!isButtonEnabled) {
+      alert('입력값을 다시 확인해주세요.')
+      return
+    }
+
+    try {
+      await signup(username, password)
+      alert('회원가입 성공!')
+      goToLogin()
+    } catch (error) {
+      alert(`회원가입 실패!: ${(error as Error).message}`)
+    }
+  }
+
+  // 로그인 페이지로 이동하는 함수
+  const goToLogin = () => {
+    navigate('/') // '/' 경로로 이동
+  }
+
   // 비밀번호 유효성 검사 정규식
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
 
@@ -50,22 +91,6 @@ export default function Signup() {
       username !== '' && passwordRegex.test(password) && confirmPassword === password
     )
   }, [username, password, confirmPassword])
-
-  // 회원가입 버튼 클릭 시 처리 함수
-  const handleSignup = () => {
-    if (isButtonEnabled) {
-      alert('회원가입 성공!')
-      goToLogin()
-      // 회원가입 로직 추가 가능
-    } else {
-      alert('입력값을 다시 확인해주세요.')
-    }
-  }
-
-  // 로그인 페이지로 이동하는 함수
-  const goToLogin = () => {
-    navigate('/') // '/' 경로로 이동
-  }
 
   return (
     <div className="page">

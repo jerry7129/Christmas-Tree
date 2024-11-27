@@ -19,10 +19,7 @@ if (!mongoURI) {
 }
 
 mongoose
-  .connect(
-    //`mongodb+srv://${DB_ID}:${DB_PASSWORD}@${DB_NAME}.b3ebp.mongodb.net/`*/
-    mongoURI
-  )
+  .connect(mongoURI)
   .then(() => console.log("mongoose connected."))
   .catch(() => console.log("failed."));
 

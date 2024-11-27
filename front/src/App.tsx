@@ -5,6 +5,7 @@ import Login from './Login'
 import Signup from './Signup'
 import CustomTree from './CustomTree'
 import WriteLetter from './WriteLetter'
+import {PrivateRoute} from './PrivateRoute'
 
 function App() {
   return (
@@ -13,8 +14,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} /> {/* 로그인 페이지 */}
           <Route path="/signup" element={<Signup />} /> {/* 회원가입 페이지 */}
-          <Route path="/customtree" element={<CustomTree />} /> {/* 트리 수정 페이지 */}
-          <Route path="/writeletter" element={<WriteLetter />} /> {/* 편지 쓰기 페이지 */}
+          <Route path="/customtree" element={<CustomTree />} />
+          {/* 트리 수정 페이지 */}
+          {/*<Route path="/writeletter" element={<WriteLetter />} /> {/* 편지 쓰기 페이지 }*/}
         </Routes>
       </Router>
     </AuthProvider>

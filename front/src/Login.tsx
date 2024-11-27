@@ -5,50 +5,50 @@ import {AiFillEye, AiFillEyeInvisible} from 'react-icons/ai'
 
 export default function Login() {
   const navigate = useNavigate()
-
-  const {login} = useAuth()
+  const {onLogin} = useAuth()
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState({password: ''})
-  const [isButtonEnabled, setIsButtonEnabled] = useState(false)
-
+  //const [isButtonEnabled, setIsButtonEnabled] = useState(false)
   const [hide, setHide] = useState(true)
-
-  // 예시 회원가입된 계정 정보
-  const registeredUser = {
-    username: 'testuser',
-    password: 'Test@1234'
-  }
 
   // 비밀번호 유효성 검사 정규식
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
+  const isButtonEnabled = username !== '' && passwordRegex.test(password)
 
-  // 비밀번호 유효성 검사를 수행하는 함수
-  const validatePassword = (value: string) => {
-    if (!passwordRegex.test(value)) {
-      setErrors({...errors, password: '영문, 숫자, 특수문자 포함 8자 이상 입력해주세요.'})
-    } else {
-      setErrors({...errors, password: ''})
+  // 로그인 요청 함수
+  const login = async (username: string, password: string) => {
+    const response = await fetch('http://localhost:5000/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({username, password})
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.message)
     }
+
+    const {token} = await response.json()
+    onLogin(token)
   }
 
-  // 아이디와 비밀번호 상태에 따라 로그인 버튼 활성화 상태를 업데이트
-  useEffect(() => {
-    setIsButtonEnabled(username !== '' && passwordRegex.test(password))
-  }, [username, password])
-
   // 로그인 버튼 클릭 시 처리 함수
-  const handleLogin = () => {
-    if (
-      /*username === registeredUser.username && password === registeredUser.password*/
-      username
-    ) {
+  const handleLogin = async () => {
+    if (!isButtonEnabled) {
+      alert('입력값을 다시 확인해주세요.')
+      return
+    }
+
+    try {
+      await login(username, password)
       alert('로그인 성공!')
-      login(username)
       navigate('/customtree')
-    } else {
-      alert('알맞는 회원 정보가 없습니다.')
+    } catch (error) {
+      alert(`로그인 실패!: ${(error as Error).message}`)
     }
   }
 
@@ -56,6 +56,21 @@ export default function Login() {
   const goToSignup = () => {
     navigate('/signup') // '/signup' 경로로 이동
   }
+
+  // 비밀번호 유효성 검사를 수행하는 함수
+  const validatePassword = (value: string) => {
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      password: passwordRegex.test(value)
+        ? ''
+        : '영문, 숫자, 특수문자 포함 8자 이상 입력해주세요.'
+    }))
+  }
+
+  // 아이디와 비밀번호 상태에 따라 로그인 버튼 활성화 상태를 업데이트
+  /*useEffect(() => {
+    setIsButtonEnabled(username !== '' && passwordRegex.test(password))
+  }, [username, password])*/
 
   return (
     <div className="page">
