@@ -2,7 +2,7 @@ import React, {createContext, useContext, useState, ReactNode, useEffect} from '
 
 // 인증 상태와 관련된 인터페이스
 interface AuthContextType {
-  authToken: string | undefined
+  authToken: string | null
   onLogin: (token: string) => void
   onLogout: () => void
 }
@@ -12,14 +12,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 // Context Provider 컴포넌트 정의
 export const AuthProvider = ({children}: {children: ReactNode}) => {
-  const [authToken, setAuthToken] = useState<string | undefined>(undefined)
+  const [authToken, setAuthToken] = useState<string | null>(null)
 
   // 초기화 로직: LocalStorage에서 토큰 복원
   useEffect(() => {
     const token = localStorage.getItem('authToken')
-    if (token) {
-      setAuthToken(token)
-    }
+    setAuthToken(token ?? null)
   }, [])
 
   // 로그인 함수
@@ -30,12 +28,8 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
 
   // 로그아웃 함수
   const onLogout = () => {
-    setAuthToken('')
+    setAuthToken(null)
     localStorage.removeItem('authToken') // 로컬 스토리지에서 사용자 정보 제거
-  }
-
-  if (authToken == undefined) {
-    return <div>로딩 중...</div>
   }
 
   return (

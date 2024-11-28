@@ -2,10 +2,12 @@ import React, {useState} from 'react'
 import {TiThMenu} from 'react-icons/ti'
 import {useNavigate} from 'react-router-dom'
 
-export default function WriteLetter(treeName: string, treeColor: string) {
+export default function WriteLetter() {
   const [showMenu, setShowMenu] = useState(false)
   const [showNotepad, setShowNotepad] = useState(false)
   const [letter, setLetter] = useState('')
+  const [treeName, setTreeName] = useState('My Tree') // 트리 이름
+  const [treeColor, setTreeColor] = useState('red') // 기본 트리 색상
 
   const navigate = useNavigate()
 
@@ -33,9 +35,9 @@ export default function WriteLetter(treeName: string, treeColor: string) {
       />
       {showMenu && (
         <div className="menuList">
-          <button onClick={() => alert('받은 편지함')}>받은 편지함</button>
           <button onClick={() => navigate('/customtree')}>색상 변경하기</button>
           <button onClick={() => alert('링크 공유하기')}>링크 공유하기</button>
+          <button onClick={() => alert('로그아웃')}>로그아웃</button>
         </div>
       )}
 

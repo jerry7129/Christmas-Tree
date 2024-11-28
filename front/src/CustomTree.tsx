@@ -62,11 +62,16 @@ export default function CustomTree() {
   }
 
   useEffect(() => {
+    if (authToken === null) return // 로딩 중, 아무 작업도 하지 않음
+    if (!authToken) {
+      navigate('/') // 로그인 페이지로 이동
+      return
+    }
     getUserData()
-  }, [])
+  }, [authToken, navigate])
 
-  if (authToken == undefined) {
-    return <div>로딩 중...</div>
+  if (authToken == null) {
+    return <div>로딩 중......</div>
   }
 
   if (!authToken) {
@@ -86,9 +91,9 @@ export default function CustomTree() {
         <div className="menuList">
           {!!authToken ? (
             <>
-              <button onClick={() => alert('받은 편지함')}>받은 편지함</button>
-              <button onClick={() => alert('색상 변경하기')}>색상 변경하기</button>
+              <button onClick={() => navigate('/writeletter')}>받은 편지함</button>
               <button onClick={() => alert('링크 공유하기')}>링크 공유하기</button>
+              <button onClick={() => alert('로그아웃')}>로그아웃</button>
             </>
           ) : (
             <>
