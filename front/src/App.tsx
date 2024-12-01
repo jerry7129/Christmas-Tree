@@ -23,14 +23,7 @@ function App() {
             }
           />
           {/* 트리 수정 페이지 */}
-          <Route
-            path="/writeletter"
-            element={
-              <PrivateRoute>
-                <WriteLetter />
-              </PrivateRoute>
-            }
-          />
+          <Route path="/writeletter/:username" element={<WriteLetter />} />
           {/* 편지 쓰기 페이지 }*/}
         </Routes>
       </Router>

@@ -4,7 +4,7 @@ import {useNavigate} from 'react-router-dom'
 import {TiThMenu} from 'react-icons/ti'
 
 export default function CustomTree() {
-  const {authToken} = useAuth()
+  const {authToken, onLogout} = useAuth()
   const [showMenu, setShowMenu] = useState(false) // 메뉴 표시 여부
   const [treeName, setTreeName] = useState('') // 트리 이름
   const [treeColor, setTreeColor] = useState('red') // 기본 트리 색상
@@ -70,6 +70,11 @@ export default function CustomTree() {
     getUserData()
   }, [authToken, navigate])
 
+  const logout = () => {
+    onLogout()
+    navigate('/')
+  }
+
   if (authToken == null) {
     return <div>로딩 중......</div>
   }
@@ -91,9 +96,9 @@ export default function CustomTree() {
         <div className="menuList">
           {!!authToken ? (
             <>
-              <button onClick={() => navigate('/writeletter')}>받은 편지함</button>
+              <button onClick={() => navigate('/inbox')}>받은 편지함</button>
               <button onClick={() => alert('링크 공유하기')}>링크 공유하기</button>
-              <button onClick={() => alert('로그아웃')}>로그아웃</button>
+              <button onClick={() => logout()}>로그아웃</button>
             </>
           ) : (
             <>
@@ -129,7 +134,7 @@ export default function CustomTree() {
       {/* 트리 이미지 */}
       <div className="treeWrap">
         <img
-          src="images/christmasTree.png"
+          src="/images/christmasTree.png"
           style={{
             filter: `hue-rotate(${
               treeColor === 'red'
