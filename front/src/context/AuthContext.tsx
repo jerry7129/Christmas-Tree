@@ -3,7 +3,8 @@ import React, {createContext, useContext, useState, ReactNode, useEffect} from '
 // 인증 상태와 관련된 인터페이스
 interface AuthContextType {
   authToken: string | null
-  onLogin: (token: string) => void
+  refreshToken: string | null
+  onLogin: (authToken: string, refreshToken: string) => void
   onLogout: () => void
 }
 
@@ -13,27 +14,37 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 // Context Provider 컴포넌트 정의
 export const AuthProvider = ({children}: {children: ReactNode}) => {
   const [authToken, setAuthToken] = useState<string | null>(null)
+  const [refreshToken, setRefreshToken] = useState<string | null>(null)
 
   // 초기화 로직: LocalStorage에서 토큰 복원
   useEffect(() => {
-    const token = localStorage.getItem('authToken')
-    setAuthToken(token ?? null)
+    const storedAuthToken = localStorage.getItem('authToken')
+    const storedRefreshToken = localStorage.getItem('refreshToken')
+    if (storedAuthToken && storedRefreshToken) {
+      setAuthToken(storedAuthToken)
+      setRefreshToken(storedRefreshToken)
+    }
+    console.log('hi')
   }, [])
 
   // 로그인 함수
-  const onLogin = (authToken: string) => {
+  const onLogin = (authToken: string, refreshToken: string) => {
     setAuthToken(authToken)
-    localStorage.setItem('authToken', authToken) // 로컬 스토리지에 사용자 정보 저장
+    setRefreshToken(refreshToken)
+    localStorage.setItem('authToken', authToken) // localStorage에 accessToken 저장
+    localStorage.setItem('refreshToken', refreshToken) // localStorage에 refreshToken 저장
   }
 
   // 로그아웃 함수
   const onLogout = () => {
     setAuthToken(null)
-    localStorage.removeItem('authToken') // 로컬 스토리지에서 사용자 정보 제거
+    setRefreshToken(null)
+    localStorage.removeItem('authToken') // localStorage에서 accessToken 제거
+    localStorage.removeItem('refreshToken') // localStorage에서 refreshToken 제거
   }
 
   return (
-    <AuthContext.Provider value={{authToken, onLogin, onLogout}}>
+    <AuthContext.Provider value={{authToken, refreshToken, onLogin, onLogout}}>
       {children}
     </AuthContext.Provider>
   )

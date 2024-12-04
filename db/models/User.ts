@@ -8,8 +8,10 @@ export interface ILetter extends Document {
 }
 
 export interface IUser extends Document {
+  _id: string;
   username: string;
   password: string;
+  refreshToken: string;
   tree: {
     name: string;
     color: string;
@@ -29,6 +31,7 @@ const LetterSchema: Schema = new Schema(
 
 const UserSchema: Schema = new Schema(
   {
+    id: { type: String },
     username: { type: String, required: true },
     password: { type: String, required: true },
     tree: {

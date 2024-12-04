@@ -12,7 +12,7 @@ interface Letter {
 
 export default function WriteLetter() {
   const {username} = useParams<{username: string}>() // 수신자 이름
-  const {onLogout} = useAuth()
+  const {authToken, refreshToken, onLogout} = useAuth()
   const [showMenu, setShowMenu] = useState(false)
   const [showNotepad, setShowNotepad] = useState(false)
   const [showLetterPopup, setShowLetterPopup] = useState(false)
@@ -88,7 +88,7 @@ export default function WriteLetter() {
 
   useEffect(() => {
     getUserData()
-  }, [handleSaveLetter, navigate])
+  }, [username])
 
   return (
     <div className="page">
@@ -102,7 +102,11 @@ export default function WriteLetter() {
       {showMenu && (
         <div className="menuList">
           <button onClick={() => alert('링크 공유하기')}>링크 공유하기</button>
-          <button onClick={() => logout()}>로그아웃</button>
+          {authToken ? (
+            <button onClick={() => logout()}>로그아웃</button>
+          ) : (
+            <button onClick={() => navigate('/')}>로그인</button>
+          )}
         </div>
       )}
 
@@ -139,6 +143,14 @@ export default function WriteLetter() {
         </div>
       </div>
 
+      {showLetterPopup && selectedLetter && (
+        <div className="letterPopup">
+          <h3>{selectedLetter.isPrivate ? '익명' : selectedLetter.sender}의 편지</h3>
+          <p>{selectedLetter.content}</p>
+          <button onClick={() => setShowLetterPopup(false)}>닫기</button>
+        </div>
+      )}
+
       {/* 편지 쓰기 버튼 */}
       <button className="writeLetterButton" onClick={handleWriteLetter}>
         편지쓰기
@@ -169,20 +181,6 @@ export default function WriteLetter() {
             {isPrivate ? '익명 해제' : '익명'}
           </button>
           <button onClick={handleSaveLetter}>완료</button>
-        </div>
-      )}
-
-      {showLetterPopup && selectedLetter && (
-        <div className="letterPopup">
-          <button
-            onClick={() => {
-              console.log(selectedLetter)
-            }}>
-            버튼
-          </button>
-          <h3>{selectedLetter.isPrivate ? '익명' : selectedLetter.sender}의 편지</h3>
-          <p>{selectedLetter.content}</p>
-          <button onClick={() => setShowLetterPopup(false)}>닫기</button>
         </div>
       )}
     </div>

@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import {apiCall} from './api'
 import {useAuth} from './context/AuthContext'
 import {useNavigate} from 'react-router-dom'
 import {AiFillEye, AiFillEyeInvisible} from 'react-icons/ai'
@@ -32,8 +33,8 @@ export default function Login() {
       throw new Error(error.message)
     }
 
-    const {token} = await response.json()
-    onLogin(token)
+    const {accessToken, refreshToken} = await response.json()
+    onLogin(accessToken, refreshToken)
   }
 
   // 로그인 버튼 클릭 시 처리 함수

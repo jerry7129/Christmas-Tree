@@ -2,12 +2,21 @@ import React, {useState, useEffect} from 'react'
 import {useAuth} from './context/AuthContext'
 import {useNavigate} from 'react-router-dom'
 import {TiThMenu} from 'react-icons/ti'
+import {apiCall} from './api'
+
+interface Letter {
+  sender: string
+  content: string
+  decorationType: string
+  isPrivate: boolean
+}
 
 export default function CustomTree() {
-  const {authToken, onLogout} = useAuth()
+  const {authToken, refreshToken, onLogout} = useAuth()
   const [showMenu, setShowMenu] = useState(false) // 메뉴 표시 여부
   const [treeName, setTreeName] = useState('') // 트리 이름
   const [treeColor, setTreeColor] = useState('red') // 기본 트리 색상
+  const [inbox, setInbox] = useState<Letter[]>()
   const [isEditting, setIsEditting] = useState(true)
 
   const navigate = useNavigate()
@@ -22,14 +31,19 @@ export default function CustomTree() {
         throw new Error('공백은 트리 이름이 될 수 없습니다.')
       }
       setTreeName(treeName)
-      const response = await fetch('http://localhost:5000/api/mydata/tree', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${authToken}`
+      const response = await apiCall(
+        'http://localhost:5000/api/mydata/tree',
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authToken}`
+          },
+          body: JSON.stringify({name: treeName, color: treeColor})
         },
-        body: JSON.stringify({name: treeName, color: treeColor})
-      })
+        onLogout,
+        refreshToken
+      )
       if (!response.ok) {
         throw new Error('변경사항 저장 실패')
       }
@@ -42,24 +56,32 @@ export default function CustomTree() {
 
   const getUserData = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/mydata', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${authToken}`
-        }
-      })
+      const response = await apiCall(
+        'http://localhost:5000/api/mydata',
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authToken}`
+          }
+        },
+        onLogout,
+        refreshToken
+      )
       if (!response.ok) {
         throw new Error('유저 정보 불러오기 실패')
       }
       const data = await response.json()
       setTreeName(data.tree.name)
       setTreeColor(data.tree.color)
+      setInbox(data.letter)
       setIsEditting(false)
     } catch (error) {
       alert(`${error}`)
     }
   }
+
+  const showInbox = () => {}
 
   useEffect(() => {
     if (authToken === null) return // 로딩 중, 아무 작업도 하지 않음
@@ -173,7 +195,7 @@ export default function CustomTree() {
       {isEditting ? (
         <button onClick={() => handleSaveChanges()}>변경완료</button>
       ) : (
-        <button onClick={() => setIsEditting(true)}>색상 변경</button>
+        <button onClick={() => setIsEditting(true)}>트리 변경</button>
       )}
     </div>
   )

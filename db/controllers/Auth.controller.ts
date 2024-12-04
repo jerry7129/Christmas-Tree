@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import User from "../models/User";
 
 const AuthController = {
@@ -25,13 +25,51 @@ const AuthController = {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) res.status(401).json({ message: "Invalid credentials" });
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || "", {
-          expiresIn: "1h",
-        });
-        res.json({ token });
+        const accessToken = jwt.sign(
+          { id: user._id },
+          process.env.JWT_SECRET || "",
+          {
+            expiresIn: "1h",
+          }
+        );
+        const refreshToken = jwt.sign(
+          { id: user._id },
+          process.env.JWT_SECRET || "",
+          {
+            expiresIn: "7d",
+          }
+        );
+        res.json({ accessToken, refreshToken });
       }
     } catch (error) {
       res.status(500).json({ message: "Error logging in", error });
+    }
+  },
+  refresh: async (req: Request, res: Response) => {
+    const { refreshToken } = req.body;
+    if (!refreshToken) {
+      res.status(401).json({ error: "Refresh token required" });
+      return;
+    }
+    try {
+      const payload = jwt.verify(
+        refreshToken,
+        process.env.JWT_REFRESH_SECRET || ""
+      ) as JwtPayload;
+      const user = await User.findById(payload.id);
+
+      if (!user || user.refreshToken !== refreshToken) {
+        res.status(401).json({ error: "Invalid refresh token" });
+        return;
+      }
+      const newAccessToken = jwt.sign(
+        { id: user._id },
+        process.env.JWT_REFRESH_SECRET || "",
+        { expiresIn: "7d" }
+      );
+      res.json({ accessToken: newAccessToken });
+    } catch (error) {
+      res.status(401).json({ error: "Invalid or expired refresh token" });
     }
   },
 };
