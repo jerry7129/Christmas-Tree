@@ -14,6 +14,7 @@ interface Letter {
 export default function CustomTree() {
   const {authToken, refreshToken, onLogout} = useAuth()
   const [showMenu, setShowMenu] = useState(false) // 메뉴 표시 여부
+  const [username, setUsername] = useState('') // 유저 이름
   const [treeName, setTreeName] = useState('') // 트리 이름
   const [treeColor, setTreeColor] = useState('red') // 기본 트리 색상
   const [inbox, setInbox] = useState<Letter[]>()
@@ -32,7 +33,7 @@ export default function CustomTree() {
       }
       setTreeName(treeName)
       const response = await apiCall(
-        'http://localhost:5000/api/mydata/tree',
+        'http://18.218.119.217:5000/api/mydata/tree',
         {
           method: 'PUT',
           headers: {
@@ -57,7 +58,7 @@ export default function CustomTree() {
   const getUserData = async () => {
     try {
       const response = await apiCall(
-        'http://localhost:5000/api/mydata',
+        'http://18.218.119.217:5000/api/mydata',
         {
           method: 'GET',
           headers: {
@@ -72,6 +73,7 @@ export default function CustomTree() {
         throw new Error('유저 정보 불러오기 실패')
       }
       const data = await response.json()
+      setUsername(data.username)
       setTreeName(data.tree.name)
       setTreeColor(data.tree.color)
       setInbox(data.letter)
@@ -82,6 +84,20 @@ export default function CustomTree() {
   }
 
   const showInbox = () => {}
+
+  const handleCopyLink = /*async*/ () => {
+    /*const curruntLink = window.location.href
+    const link = curruntLink.replace(/\/customtree$/, `/writeletter/${username}`)
+    try {
+      await navigator.clipboard.writeText(link)
+      alert('링크가 클립보드에 복사되었습니다.')
+    } catch (error) {
+      alert(error)
+    }*/
+    alert(
+      '현재주소에 customtree를 writeletter/자신의username으로 바꾸세요 *https 변경 후 기능 업데이트 예정'
+    )
+  }
 
   useEffect(() => {
     if (authToken === null) return // 로딩 중, 아무 작업도 하지 않음
@@ -119,7 +135,7 @@ export default function CustomTree() {
           {!!authToken ? (
             <>
               <button onClick={() => navigate('/inbox')}>받은 편지함</button>
-              <button onClick={() => alert('링크 공유하기')}>링크 공유하기</button>
+              <button onClick={() => handleCopyLink()}>링크 공유하기</button>
               <button onClick={() => logout()}>로그아웃</button>
             </>
           ) : (

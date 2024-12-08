@@ -20,7 +20,7 @@ export default function Login() {
 
   // 로그인 요청 함수
   const login = async (username: string, password: string) => {
-    const response = await fetch('http://localhost:5000/api/auth/login', {
+    const response = await fetch('http://18.218.119.217:5000/api/auth/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

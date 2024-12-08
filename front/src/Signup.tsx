@@ -15,7 +15,7 @@ export default function Signup() {
 
   // 회원가입 요청 함수
   const signup = async (username: string, password: string) => {
-    const response = await fetch('http://localhost:5000/api/auth/signup', {
+    const response = await fetch('http://18.218.119.217:5000/api/auth/signup', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

@@ -24,7 +24,6 @@ export const AuthProvider = ({children}: {children: ReactNode}) => {
       setAuthToken(storedAuthToken)
       setRefreshToken(storedRefreshToken)
     }
-    console.log('hi')
   }, [])
 
   // 로그인 함수

@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use("/api", indexRouter);
 
-const mongoURI = process.env.MONGODB_LOCAL;
+const mongoURI = process.env.MONGODB_URL;
 if (!mongoURI) {
   throw new Error("MONGODB_LOCAL 환경 변수가 설정되지 않았습니다.");
 }

@@ -5,12 +5,18 @@ import { AuthRequest } from "../middleware/AuthMiddleware";
 const MyDataController = {
   get: async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-      const user = await User.findById(req.user).select("tree letters");
+      const user = await User.findById(req.user).select(
+        "username tree letters"
+      );
       if (!user) {
         res.status(404).json({ message: "User not found" });
         return;
       }
-      res.json({ tree: user.tree, letters: user.letters });
+      res.json({
+        username: user.username,
+        tree: user.tree,
+        letters: user.letters,
+      });
     } catch (error) {
       res.status(500).json({ message: "Error fetching user data", error });
     }

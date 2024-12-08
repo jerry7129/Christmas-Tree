@@ -31,12 +31,15 @@ export default function WriteLetter() {
 
   const getUserData = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/letter/get/${username}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
+      const response = await fetch(
+        `http://18.218.119.217:5000/api/letter/get/${username}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      })
+      )
       if (!response.ok) {
         throw new Error('유저 정보 불러오기 실패')
       }
@@ -59,13 +62,16 @@ export default function WriteLetter() {
 
   const handleSaveLetter = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/letter/send/${username}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({sender, content, decorationType, isPrivate})
-      })
+      const response = await fetch(
+        `http://18.218.119.217:5000/api/letter/send/${username}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({sender, content, decorationType, isPrivate})
+        }
+      )
       if (!response.ok) {
         throw new Error('편지 전송 실패')
       }
@@ -88,7 +94,7 @@ export default function WriteLetter() {
 
   useEffect(() => {
     getUserData()
-  }, [username])
+  }, [username, showNotepad])
 
   return (
     <div className="page">
