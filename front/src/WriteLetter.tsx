@@ -7,15 +7,16 @@ interface Letter {
   sender: string
   content: string
   decorationType: string
+  createdAt: string
   isPrivate: boolean
 }
 
 export default function WriteLetter() {
+  const URL = process.env.REACT_APP_EC2_URI
   const {username} = useParams<{username: string}>() // 수신자 이름
   const {authToken, refreshToken, onLogout} = useAuth()
   const [showMenu, setShowMenu] = useState(false)
   const [showNotepad, setShowNotepad] = useState(false)
-  const [showLetterPopup, setShowLetterPopup] = useState(false)
   const [selectedLetter, setSelectedLetter] = useState<Letter | null>(null)
 
   const [sender, setSender] = useState<string>('') // 발신자 이름
@@ -25,28 +26,25 @@ export default function WriteLetter() {
 
   const [treeName, setTreeName] = useState('My Tree') // 트리 이름
   const [treeColor, setTreeColor] = useState('red') // 기본 트리 색상
-  const [letterArray, setLetterArray] = useState<Letter[]>([]) // 받은 편지함
+  const [inbox, setInbox] = useState<Letter[]>([]) // 받은 편지함
 
   const navigate = useNavigate()
 
   const getUserData = async () => {
     try {
-      const response = await fetch(
-        `http://18.218.119.217:5000/api/letter/get/${username}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          }
+      const response = await fetch(`http://${URL}:5000/api/letter/get/${username}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
         }
-      )
+      })
       if (!response.ok) {
         throw new Error('유저 정보 불러오기 실패')
       }
       const data = await response.json()
       setTreeName(data.tree.name)
       setTreeColor(data.tree.color)
-      setLetterArray(data.letters)
+      setInbox(data.letters)
     } catch (error) {
       alert(`${error}`)
     }
@@ -62,16 +60,13 @@ export default function WriteLetter() {
 
   const handleSaveLetter = async () => {
     try {
-      const response = await fetch(
-        `http://18.218.119.217:5000/api/letter/send/${username}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({sender, content, decorationType, isPrivate})
-        }
-      )
+      const response = await fetch(`http://${URL}:5000/api/letter/send/${username}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({sender, content, decorationType, isPrivate})
+      })
       if (!response.ok) {
         throw new Error('편지 전송 실패')
       }
@@ -85,11 +80,6 @@ export default function WriteLetter() {
   const logout = () => {
     onLogout()
     navigate('/')
-  }
-
-  const handleLetterClick = (letter: Letter) => {
-    setSelectedLetter(letter)
-    setShowLetterPopup(true)
   }
 
   useEffect(() => {
@@ -134,26 +124,32 @@ export default function WriteLetter() {
           }}
           alt="크리스마스 트리"
         />
-        {/* 장식 버튼들 */}
-        <div className="decorations">
-          {letterArray.map((letter, index) => (
-            <button
-              key={index}
-              className={`decoration decoration-${letter.decorationType}`}
-              onClick={() => handleLetterClick(letter)}>
-              {letter.decorationType === 'ball' && '🔴'}
-              {letter.decorationType === 'bell' && '🔔'}
-              {letter.decorationType === 'star' && '⭐'}
-            </button>
-          ))}
+        {/* 받은 편지함 */}
+        <div className="inboxSection">
+          <h3>받은 편지함</h3>
+          <div className="inboxContainer">
+            {inbox?.map((letter, index) => (
+              <button
+                key={index}
+                className={`letterIcon ${letter.decorationType}`}
+                onClick={() => setSelectedLetter(letter)}>
+                {letter.decorationType === 'ball' && '🔴'}
+                {letter.decorationType === 'bell' && '🔔'}
+                {letter.decorationType === 'star' && '⭐'}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {showLetterPopup && selectedLetter && (
+      {selectedLetter && (
         <div className="letterPopup">
-          <h3>{selectedLetter.isPrivate ? '익명' : selectedLetter.sender}의 편지</h3>
+          <h4>보낸이: {selectedLetter.isPrivate ? '익명' : selectedLetter.sender}</h4>
           <p>{selectedLetter.content}</p>
-          <button onClick={() => setShowLetterPopup(false)}>닫기</button>
+          <p style={{fontSize: 'small', color: 'gray'}}>
+            작성일: {new Date(selectedLetter.createdAt).toLocaleString()}
+          </p>
+          <button onClick={() => setSelectedLetter(null)}>닫기</button>
         </div>
       )}
 

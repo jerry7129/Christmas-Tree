@@ -4,6 +4,13 @@ import {useNavigate} from 'react-router-dom'
 import {TiThMenu} from 'react-icons/ti'
 import {apiCall} from './api'
 
+interface Letter {
+  sender: string
+  content: string
+  decorationType: string
+  createdAt: string
+}
+
 export default function CustomTree() {
   const URL = process.env.REACT_APP_EC2_URI
   const {authToken, refreshToken, onLogout} = useAuth()
@@ -11,41 +18,13 @@ export default function CustomTree() {
   const [username, setUsername] = useState('') // 유저 이름
   const [treeName, setTreeName] = useState('') // 트리 이름
   const [treeColor, setTreeColor] = useState('red') // 기본 트리 색상
-  const [isEditting, setIsEditting] = useState(true)
+  const [inbox, setInbox] = useState<Letter[]>()
+  const [selectedLetter, setSelectedLetter] = useState<Letter | null>(null)
 
   const navigate = useNavigate()
 
   const handleMenuToggle = () => {
     setShowMenu(prev => !prev)
-  }
-
-  const handleSaveChanges = async () => {
-    try {
-      if (treeName == '') {
-        throw new Error('공백은 트리 이름이 될 수 없습니다.')
-      }
-      setTreeName(treeName)
-      const response = await apiCall(
-        `http://${URL}:5000/api/mydata/tree`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${authToken}`
-          },
-          body: JSON.stringify({name: treeName, color: treeColor})
-        },
-        onLogout,
-        refreshToken
-      )
-      if (!response.ok) {
-        throw new Error('변경사항 저장 실패')
-      }
-      alert(`변경사항이 저장되었습니다: 트리 이름 "${treeName}", 색상 "${treeColor}"`)
-      navigate('/inbox')
-    } catch (error) {
-      alert(`${error}`)
-    }
   }
 
   const getUserData = async () => {
@@ -69,7 +48,7 @@ export default function CustomTree() {
       setUsername(data.username)
       setTreeName(data.tree.name)
       setTreeColor(data.tree.color)
-      setIsEditting(false)
+      setInbox(data.letters)
     } catch (error) {
       alert(`${error}`)
     }
@@ -124,7 +103,7 @@ export default function CustomTree() {
         <div className="menuList">
           {!!authToken ? (
             <>
-              <button onClick={() => navigate('/inbox')}>받은 편지함</button>
+              <button onClick={() => navigate('/customtree')}>트리 수정하기</button>
               <button onClick={() => handleCopyLink()}>링크 공유하기</button>
               <button onClick={() => logout()}>로그아웃</button>
             </>
@@ -137,19 +116,10 @@ export default function CustomTree() {
         </div>
       )}
 
-      <>
-        {/* 트리 이름 입력 */}
-        <div>
-          <input
-            className="treeName"
-            type="text"
-            value={treeName}
-            onChange={e => setTreeName(e.target.value)}
-            placeholder="이름을 입력하세요"
-          />
-          <span style={{color: 'yellow'}}> 의 트리</span>
-        </div>
-      </>
+      <div style={{textAlign: 'center'}}>
+        <h2 style={{color: 'yellow'}}>{treeName} 의 트리</h2>
+        <h4 style={{color: treeColor}}>색상: {treeColor}</h4>
+      </div>
 
       {/* 트리 이미지 */}
       <div className="treeWrap">
@@ -170,20 +140,34 @@ export default function CustomTree() {
         />
       </div>
 
-      <div className="colorButtons">
-        <button style={{backgroundColor: 'red'}} onClick={() => setTreeColor('red')} />
-        <button style={{backgroundColor: 'blue'}} onClick={() => setTreeColor('blue')} />
-        <button
-          style={{backgroundColor: 'purple'}}
-          onClick={() => setTreeColor('purple')}
-        />
-        <button
-          style={{backgroundColor: 'green'}}
-          onClick={() => setTreeColor('green')}
-        />
+      {/* 받은 편지함 */}
+      <div className="inboxSection">
+        <h3>받은 편지함</h3>
+        <div className="inboxContainer">
+          {inbox?.map((letter, index) => (
+            <button
+              key={index}
+              className={`letterIcon ${letter.decorationType}`}
+              onClick={() => setSelectedLetter(letter)}>
+              {letter.decorationType === 'ball' && '🔴'}
+              {letter.decorationType === 'bell' && '🔔'}
+              {letter.decorationType === 'star' && '⭐'}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <button onClick={() => handleSaveChanges()}>변경완료</button>
+      {/* 편지 팝업 */}
+      {selectedLetter && (
+        <div className="letterPopup">
+          <h4>보낸이: {selectedLetter.sender}</h4>
+          <p>{selectedLetter.content}</p>
+          <p style={{fontSize: 'small', color: 'gray'}}>
+            작성일: {new Date(selectedLetter.createdAt).toLocaleString()}
+          </p>
+          <button onClick={() => setSelectedLetter(null)}>닫기</button>
+        </div>
+      )}
     </div>
   )
 }

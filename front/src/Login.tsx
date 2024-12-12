@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from 'react'
-import {apiCall} from './api'
 import {useAuth} from './context/AuthContext'
 import {useNavigate} from 'react-router-dom'
 import {AiFillEye, AiFillEyeInvisible} from 'react-icons/ai'
 
 export default function Login() {
+  const URL = process.env.REACT_APP_EC2_URI
   const navigate = useNavigate()
   const {onLogin} = useAuth()
 
@@ -20,7 +20,7 @@ export default function Login() {
 
   // 로그인 요청 함수
   const login = async (username: string, password: string) => {
-    const response = await fetch('http://18.218.119.217:5000/api/auth/login', {
+    const response = await fetch(`http://${URL}:5000/api/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -47,7 +47,7 @@ export default function Login() {
     try {
       await login(username, password)
       alert('로그인 성공!')
-      navigate('/customtree')
+      navigate('/inbox')
     } catch (error) {
       alert(`로그인 실패!: ${(error as Error).message}`)
     }

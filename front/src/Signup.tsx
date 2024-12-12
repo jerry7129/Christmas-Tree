@@ -4,7 +4,7 @@ import {AiFillEye, AiFillEyeInvisible} from 'react-icons/ai'
 
 export default function Signup() {
   const navigate = useNavigate()
-
+  const URL = process.env.REACT_APP_EC2_URI
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -15,7 +15,7 @@ export default function Signup() {
 
   // 회원가입 요청 함수
   const signup = async (username: string, password: string) => {
-    const response = await fetch('http://18.218.119.217:5000/api/auth/signup', {
+    const response = await fetch(`http://${URL}:5000/api/auth/signup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
