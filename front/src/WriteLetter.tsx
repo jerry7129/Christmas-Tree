@@ -32,7 +32,7 @@ export default function WriteLetter() {
 
   const getUserData = async () => {
     try {
-      const response = await fetch(`http://${URL}:5000/api/letter/get/${username}`, {
+      const response = await fetch(`https://${URL}/api/letter/get/${username}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -60,7 +60,7 @@ export default function WriteLetter() {
 
   const handleSaveLetter = async () => {
     try {
-      const response = await fetch(`http://${URL}:5000/api/letter/send/${username}`, {
+      const response = await fetch(`https://${URL}/api/letter/send/${username}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

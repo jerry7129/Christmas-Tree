@@ -15,7 +15,7 @@ export const apiCall = async (
   })
 
   if (response.status === 401 && refreshToken) {
-    const refreshResponse = await fetch('http://localhost:5000/api/auth/refresh', {
+    const refreshResponse = await fetch(`https://${URL}/api/auth/refresh`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({refreshToken})

@@ -26,7 +26,7 @@ export default function CustomTree() {
       }
       setTreeName(treeName)
       const response = await apiCall(
-        `http://${URL}:5000/api/mydata/tree`,
+        `https://${URL}/api/mydata/tree`,
         {
           method: 'PUT',
           headers: {
@@ -51,7 +51,7 @@ export default function CustomTree() {
   const getUserData = async () => {
     try {
       const response = await apiCall(
-        `http://${URL}:5000/api/mydata`,
+        `https://${URL}/api/mydata`,
         {
           method: 'GET',
           headers: {

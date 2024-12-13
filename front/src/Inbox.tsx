@@ -30,7 +30,7 @@ export default function CustomTree() {
   const getUserData = async () => {
     try {
       const response = await apiCall(
-        `http://${URL}:5000/api/mydata`,
+        `https://${URL}/api/mydata`,
         {
           method: 'GET',
           headers: {
