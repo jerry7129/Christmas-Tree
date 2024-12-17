@@ -1,23 +1,18 @@
 import React, {useState, useEffect} from 'react'
 import {useAuth} from './context/AuthContext'
 import {useNavigate} from 'react-router-dom'
-import {TiThMenu} from 'react-icons/ti'
 import {apiCall} from './api'
+import Menu from './Menu'
 
 export default function CustomTree() {
   const URL = process.env.REACT_APP_EC2_URI
   const {authToken, refreshToken, onLogout} = useAuth()
-  const [showMenu, setShowMenu] = useState(false) // 메뉴 표시 여부
   const [username, setUsername] = useState('') // 유저 이름
   const [treeName, setTreeName] = useState('') // 트리 이름
   const [treeColor, setTreeColor] = useState('red') // 기본 트리 색상
   const [isEditting, setIsEditting] = useState(true)
 
   const navigate = useNavigate()
-
-  const handleMenuToggle = () => {
-    setShowMenu(prev => !prev)
-  }
 
   const handleSaveChanges = async () => {
     try {
@@ -75,20 +70,6 @@ export default function CustomTree() {
     }
   }
 
-  const handleCopyLink = /*async*/ () => {
-    /*const curruntLink = window.location.href
-    const link = curruntLink.replace(/\/customtree$/, `/writeletter/${username}`)
-    try {
-      await navigator.clipboard.writeText(link)
-      alert('링크가 클립보드에 복사되었습니다.')
-    } catch (error) {
-      alert(error)
-    }*/
-    alert(
-      '현재주소에 customtree를 writeletter/자신의username으로 바꾸세요 *https 변경 후 기능 업데이트 예정'
-    )
-  }
-
   useEffect(() => {
     if (authToken === null) return // 로딩 중, 아무 작업도 하지 않음
     if (!authToken) {
@@ -97,11 +78,6 @@ export default function CustomTree() {
     }
     getUserData()
   }, [authToken, navigate])
-
-  const logout = () => {
-    onLogout()
-    navigate('/')
-  }
 
   if (authToken == null) {
     return <div>로딩 중......</div>
@@ -114,60 +90,54 @@ export default function CustomTree() {
   return (
     <div className="page">
       {/* 메뉴 버튼 */}
-      <TiThMenu
-        className="menuButton"
-        size="50px"
-        color="white"
-        onClick={handleMenuToggle}
-      />
-      {showMenu && (
-        <div className="menuList">
-          {!!authToken ? (
-            <>
-              <button onClick={() => navigate('/inbox')}>받은 편지함</button>
-              <button onClick={() => handleCopyLink()}>링크 공유하기</button>
-              <button onClick={() => logout()}>로그아웃</button>
-            </>
-          ) : (
-            <>
-              <button onClick={() => navigate('/')}>로그인</button>
-              <button onClick={() => navigate('/signup')}>회원가입</button>
-            </>
-          )}
-        </div>
-      )}
-
-      <>
-        {/* 트리 이름 입력 */}
-        <div>
-          <input
-            className="treeName"
-            type="text"
-            value={treeName}
-            onChange={e => setTreeName(e.target.value)}
-            placeholder="이름을 입력하세요"
-          />
-          <span style={{color: 'yellow'}}> 의 트리</span>
-        </div>
-      </>
+      <Menu username={username ?? ''} menuType="customtree" />
 
       {/* 트리 이미지 */}
       <div className="treeWrap">
-        <img
-          src="/images/christmasTree.png"
-          style={{
-            filter: `hue-rotate(${
-              treeColor === 'red'
-                ? '0deg'
-                : treeColor === 'blue'
-                ? '180deg'
-                : treeColor === 'purple'
-                ? '270deg'
-                : '90deg'
-            })`
-          }}
-          alt="크리스마스 트리"
-        />
+        {/* 트리 이름 입력 */}
+        <div className="treeName">
+          <input
+            type="text"
+            value={treeName}
+            onChange={e => setTreeName(e.target.value)}
+            style={{
+              width: '30%',
+              height: '30px',
+              textAlign: 'center',
+              fontSize: '1.5em',
+              fontWeight: 'bold'
+            }}
+          />
+          <span
+            style={{
+              color: 'yellow',
+              fontSize: '1.5em',
+              fontWeight: 'bold',
+              marginLeft: '4px'
+            }}>
+            의 트리
+          </span>
+        </div>
+        <h4 style={{color: treeColor, marginTop: 0, marginBottom: 10}}>
+          색상: {treeColor}
+        </h4>
+        <div className="treeContainer">
+          <img
+            src="/images/christmasTree.png"
+            style={{
+              filter: `hue-rotate(${
+                treeColor === 'red'
+                  ? '0deg'
+                  : treeColor === 'blue'
+                  ? '180deg'
+                  : treeColor === 'purple'
+                  ? '270deg'
+                  : '90deg'
+              })`
+            }}
+            alt="크리스마스 트리"
+          />
+        </div>
       </div>
 
       <div className="colorButtons">

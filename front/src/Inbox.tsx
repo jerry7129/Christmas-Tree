@@ -1,20 +1,20 @@
 import React, {useState, useEffect} from 'react'
 import {useAuth} from './context/AuthContext'
 import {useNavigate} from 'react-router-dom'
-import {TiThMenu} from 'react-icons/ti'
 import {apiCall} from './api'
+import Menu from './Menu'
 
 interface Letter {
   sender: string
   content: string
   decorationType: string
   createdAt: string
+  position: {x: number; y: number} // 오너먼트 위치
 }
 
 export default function CustomTree() {
   const URL = process.env.REACT_APP_EC2_URI
   const {authToken, refreshToken, onLogout} = useAuth()
-  const [showMenu, setShowMenu] = useState(false) // 메뉴 표시 여부
   const [username, setUsername] = useState('') // 유저 이름
   const [treeName, setTreeName] = useState('') // 트리 이름
   const [treeColor, setTreeColor] = useState('red') // 기본 트리 색상
@@ -22,10 +22,6 @@ export default function CustomTree() {
   const [selectedLetter, setSelectedLetter] = useState<Letter | null>(null)
 
   const navigate = useNavigate()
-
-  const handleMenuToggle = () => {
-    setShowMenu(prev => !prev)
-  }
 
   const getUserData = async () => {
     try {
@@ -54,20 +50,6 @@ export default function CustomTree() {
     }
   }
 
-  const handleCopyLink = /*async*/ () => {
-    /*const curruntLink = window.location.href
-    const link = curruntLink.replace(/\/customtree$/, `/writeletter/${username}`)
-    try {
-      await navigator.clipboard.writeText(link)
-      alert('링크가 클립보드에 복사되었습니다.')
-    } catch (error) {
-      alert(error)
-    }*/
-    alert(
-      '현재주소에 customtree를 writeletter/자신의username으로 바꾸세요 *https 변경 후 기능 업데이트 예정'
-    )
-  }
-
   useEffect(() => {
     if (authToken === null) return // 로딩 중, 아무 작업도 하지 않음
     if (!authToken) {
@@ -76,11 +58,6 @@ export default function CustomTree() {
     }
     getUserData()
   }, [authToken, navigate])
-
-  const logout = () => {
-    onLogout()
-    navigate('/')
-  }
 
   if (authToken == null) {
     return <div>로딩 중......</div>
@@ -93,65 +70,69 @@ export default function CustomTree() {
   return (
     <div className="page">
       {/* 메뉴 버튼 */}
-      <TiThMenu
-        className="menuButton"
-        size="50px"
-        color="white"
-        onClick={handleMenuToggle}
-      />
-      {showMenu && (
-        <div className="menuList">
-          {!!authToken ? (
-            <>
-              <button onClick={() => navigate('/customtree')}>트리 수정하기</button>
-              <button onClick={() => handleCopyLink()}>링크 공유하기</button>
-              <button onClick={() => logout()}>로그아웃</button>
-            </>
-          ) : (
-            <>
-              <button onClick={() => navigate('/')}>로그인</button>
-              <button onClick={() => navigate('/signup')}>회원가입</button>
-            </>
-          )}
-        </div>
-      )}
+      <Menu username={username} menuType="inbox" />
 
-      <div style={{textAlign: 'center'}}>
-        <h2 style={{color: 'yellow'}}>{treeName} 의 트리</h2>
-        <h4 style={{color: treeColor}}>색상: {treeColor}</h4>
-      </div>
-
-      {/* 트리 이미지 */}
       <div className="treeWrap">
-        <img
-          src="/images/christmasTree.png"
-          style={{
-            filter: `hue-rotate(${
-              treeColor === 'red'
-                ? '0deg'
-                : treeColor === 'blue'
-                ? '180deg'
-                : treeColor === 'purple'
-                ? '270deg'
-                : '90deg'
-            })`
-          }}
-          alt="크리스마스 트리"
-        />
+        <div style={{textAlign: 'center'}}>
+          <h2 style={{color: 'yellow', marginTop: 10, marginBottom: 0}}>
+            {treeName} 의 트리
+          </h2>
+          <h4 style={{color: treeColor, marginTop: 0, marginBottom: 10}}>
+            색상: {treeColor}
+          </h4>
+          <h5 style={{color: 'white', margin: 0}}>
+            {inbox ? inbox.length : 0}개의 편지가 왔어요!
+          </h5>
+        </div>
+
+        {/* 트리 이미지 */}
+        <div className="treeContainer" style={{position: 'relative'}}>
+          <img
+            src="/images/christmasTree.png"
+            style={{
+              filter: `hue-rotate(${
+                treeColor === 'red'
+                  ? '0deg'
+                  : treeColor === 'blue'
+                  ? '180deg'
+                  : treeColor === 'purple'
+                  ? '270deg'
+                  : '90deg'
+              })`,
+              position: 'relative'
+            }}
+            alt="크리스마스 트리"
+          />
+          {/* 트리에 오너먼트 추가 */}
+
+          {inbox?.map((letter, index) => (
+            <button
+              key={index}
+              className={`ornament`}
+              style={{
+                position: 'absolute',
+                top: letter.position ? `${letter.position.y}px` : '50px',
+                left: letter.position ? `${letter.position.x}px` : '50px',
+                transform: 'translate(-50%, -50%)',
+                cursor: 'pointer'
+              }}
+              onClick={() => setSelectedLetter(letter)}>
+              {letter.decorationType}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* 받은 편지함 */}
+      {/* 받은 편지함*/}
       <div className="inboxSection">
-        <h3>받은 편지함</h3>
+        <h4 style={{margin: '5px'}}>받은 편지함</h4>
         <div className="inboxContainer">
           {inbox?.map((letter, index) => (
             <button
               key={index}
               className={`letterIcon ${letter.decorationType}`}
               onClick={() => setSelectedLetter(letter)}>
-              {letter.decorationType === 'ball' && '🔴'}
-              {letter.decorationType === 'bell' && '🔔'}
-              {letter.decorationType === 'star' && '⭐'}
+              {letter.decorationType}
             </button>
           ))}
         </div>

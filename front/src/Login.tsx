@@ -93,22 +93,24 @@ export default function Login() {
 
         <div className="inputTitle">비밀번호</div>
         <div className="inputWrap">
-          <input
-            className="input"
-            type={hide ? 'password' : 'text'}
-            value={password}
-            onChange={e => {
-              setPassword(e.target.value)
-              validatePassword(e.target.value)
-            }}
-            placeholder="비밀번호를 입력하세요"
-          />
-          <div className="passwordIcon" onClick={() => setHide(!hide)}>
-            {hide ? <AiFillEyeInvisible /> : <AiFillEye />}
+          <div style={{position: 'relative'}}>
+            <input
+              className="input"
+              type={hide ? 'password' : 'text'}
+              value={password}
+              onChange={e => {
+                setPassword(e.target.value)
+                validatePassword(e.target.value)
+              }}
+              placeholder="비밀번호를 입력하세요"
+            />
+            <div className="passwordIcon" onClick={() => setHide(!hide)}>
+              {hide ? <AiFillEyeInvisible /> : <AiFillEye />}
+            </div>
           </div>
+          {/* 비밀번호 입력 시 조건을 충족하지 않으면 에러 메시지 표시 */}
+          {errors.password && <div className="errorMessageWrap">{errors.password}</div>}
         </div>
-        {/* 비밀번호 입력 시 조건을 충족하지 않으면 에러 메시지 표시 */}
-        {errors.password && <div className="errorMessageWrap">{errors.password}</div>}
 
         <div>
           <button

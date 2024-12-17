@@ -24,7 +24,7 @@ const LetterController = {
   },
   send: async (req: Request, res: Response) => {
     const { username } = req.params;
-    const { sender, content, decorationType, isPrivate } = req.body;
+    const { sender, content, decorationType, isPrivate, position } = req.body;
     try {
       const recipient = await User.findOne({ username });
       if (!recipient) {
@@ -37,6 +37,7 @@ const LetterController = {
         content,
         decorationType,
         isPrivate,
+        position,
       };
 
       recipient.letters.push(letter as ILetter);

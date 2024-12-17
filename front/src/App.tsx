@@ -6,6 +6,7 @@ import Signup from './Signup'
 import Inbox from './Inbox'
 import CustomTree from './CustomTree'
 import WriteLetter from './WriteLetter'
+import Information from './Information'
 
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
           {/* 트리 수정 페이지 */}
           <Route path="/writeletter/:username" element={<WriteLetter />} />
           {/* 편지 쓰기 페이지 }*/}
+          <Route path="/information" element={<Information />} />
+          {/* 개발 정보 }*/}
         </Routes>
       </Router>
     </AuthProvider>

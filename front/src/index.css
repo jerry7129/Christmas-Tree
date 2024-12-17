@@ -1,6 +1,9 @@
+body {
+  margin: 0;
+}
 /* 전체 페이지 스타일 */
 .page {
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -10,7 +13,7 @@
 }
 
 .titleWrap {
-  margin-top: 10vh;
+  margin-top: 10%;
   text-align: center;
   background: #d9d9d9;
   padding: 16px;
@@ -59,6 +62,7 @@ p {
 .errorMessageWrap {
   color: #e74c3c;
   font-size: 12px;
+  margin-top: 4px;
   margin-bottom: 8px;
 }
 
@@ -136,28 +140,45 @@ p {
 
 /* 트리 이름 입력란 */
 .treeName {
-  width: 60%;
-  padding: 8px;
-  margin-bottom: 16px;
-  font-size: 16px;
+  width: 100%;
+  padding: 0px;
+  margin-top: 16px;
+  margin-bottom: 0px;
+  font-size: 100%;
   text-align: center;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 
-/* 트리 이미지 스타일 */
+/* 트리 섹션 스타일 */
 .treeWrap {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
+  width: 300px;
   flex-direction: column;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-.treeWrap img {
-  width: 40%;
+.treeContainer {
+  width: 100%;
   height: auto;
+  position: relative;
+  margin: auto;
+}
+
+.treeContainer img {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
   transition: filter 0.3s ease;
+  overflow: hidden;
 }
 
 /* 색상 버튼 스타일 */
@@ -196,25 +217,91 @@ button:hover {
 
 /* For the notepad popup */
 .notepadPopup {
-  position: fixed;
+  position: fixed; /* 화면 중앙에 고정 */
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #fff;
+  border: 2px solid #ddd;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 20px;
   width: 300px;
-  z-index: 20;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  font-family: Arial, sans-serif;
 }
 
 .notepadPopup textarea {
-  width: 100%;
+  width: 93%;
   height: 150px;
   resize: none;
   padding: 10px;
   font-size: 14px;
   margin-bottom: 10px;
+}
+
+/* 노트패드 팝업 내 버튼 스타일 */
+.notepadPopup button {
+  margin-right: 5px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.notepadPopup button:hover {
+  background-color: #45a049;
+}
+
+.notepadPopup button:nth-child(6) {
+  /* 취소 버튼 스타일 */
+  background-color: #f44336;
+}
+
+.notepadPopup button:nth-child(6):hover {
+  background-color: #e53935;
+}
+
+/* 장식 선택 섹션 */
+.decorationSelector {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 10px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.decorationSelector text {
+  margin-left: 10px;
+  font-weight: bold;
+  color: #555;
+}
+
+.decorationSelector input {
+  margin-left: 10px;
+  padding: 5px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* 체크박스와 라벨 */
+label {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+label input[type='checkbox'] {
+  margin-right: 10px;
+  transform: scale(1.2); /* 체크박스 크기 확대 */
 }
 
 .writeLetterButton {
@@ -254,14 +341,37 @@ button:hover {
 
 .letterIcon {
   background: none;
+  padding: 10px;
   border: none;
   cursor: pointer;
-  font-size: 24px; /* 아이콘 크기 */
+  font-size: 16px; /* 아이콘 크기 */
   color: #007bff;
 }
 
 .letterIcon:hover {
   color: #0056b3;
+}
+
+.ornament {
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  font-size: 16px; /* 아이콘 크기 */
+  width: 16px; /* 아이콘 크기와 동일하게 설정 */
+  height: 16px; /* 아이콘 크기와 동일하게 설정 */
+
+  display: inline-flex; /* 내용물 크기에 맞게 버튼 크기를 맞춤 */
+  align-items: center; /* 내용물을 수직으로 가운데 정렬 */
+  justify-content: center; /* 내용물을 수평으로 가운데 정렬 */
+  padding: 0; /* 여백 제거 */
+  margin: 0; /* 외부 여백 제거 */
+}
+
+.additional {
+  background: yellow;
+  width: 25px;
+  height: 25px;
 }
 
 .letterPopup {
@@ -274,6 +384,7 @@ button:hover {
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 200px;
   z-index: 1000;
   text-align: center;
 }

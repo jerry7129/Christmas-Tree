@@ -70,7 +70,8 @@ export default function Signup() {
     if (!passwordRegex.test(value)) {
       setErrors(prev => ({
         ...prev,
-        password: '영문, 숫자, 특수문자 포함 8자 이상 입력해주세요.'
+        password:
+          '영문, 숫자, 특수문자 포함 8자 이상 입력해주세요.<br />(특수문자: !@#$%&*?)'
       }))
     } else {
       setErrors(prev => ({...prev, password: ''}))
@@ -111,49 +112,58 @@ export default function Signup() {
             }}
             placeholder="아이디를 입력하세요"
           />
+          {/* 아이디 에러 메시지 */}
+          {errors.username && <div className="errorMessageWrap">{errors.username}</div>}
         </div>
-        {/* 아이디 에러 메시지 */}
-        {errors.username && <div className="errorMessageWrap">{errors.username}</div>}
 
         <div className="inputTitle">비밀번호</div>
         <div className="inputWrap">
-          <input
-            className="input"
-            type={hide[0] ? 'password' : 'text'}
-            value={password}
-            onChange={e => {
-              setPassword(e.target.value)
-              validatePassword(e.target.value)
-            }}
-            placeholder="비밀번호를 입력하세요"
-          />
-          <div className="passwordIcon" onClick={() => setHide([!hide[0], hide[1]])}>
-            {hide[0] ? <AiFillEyeInvisible /> : <AiFillEye />}
+          <div style={{position: 'relative'}}>
+            <input
+              className="input"
+              type={hide[0] ? 'password' : 'text'}
+              value={password}
+              onChange={e => {
+                setPassword(e.target.value)
+                validatePassword(e.target.value)
+              }}
+              placeholder="비밀번호를 입력하세요"
+            />
+            <div className="passwordIcon" onClick={() => setHide([!hide[0], hide[1]])}>
+              {hide[0] ? <AiFillEyeInvisible /> : <AiFillEye />}
+            </div>
           </div>
+
+          {/* 비밀번호 에러 메시지 */}
+          {errors.password && (
+            <div
+              className="errorMessageWrap"
+              dangerouslySetInnerHTML={{__html: errors.password}}></div>
+          )}
         </div>
-        {/* 비밀번호 에러 메시지 */}
-        {errors.password && <div className="errorMessageWrap">{errors.password}</div>}
 
         <div className="inputTitle">비밀번호 확인</div>
         <div className="inputWrap">
-          <input
-            className="input"
-            type={hide[1] ? 'password' : 'text'}
-            value={confirmPassword}
-            onChange={e => {
-              setConfirmPassword(e.target.value)
-              validateConfirmPassword(e.target.value)
-            }}
-            placeholder="비밀번호를 다시 입력하세요"
-          />
-          <div className="passwordIcon" onClick={() => setHide([hide[0], !hide[1]])}>
-            {hide[1] ? <AiFillEyeInvisible /> : <AiFillEye />}
+          <div style={{position: 'relative'}}>
+            <input
+              className="input"
+              type={hide[1] ? 'password' : 'text'}
+              value={confirmPassword}
+              onChange={e => {
+                setConfirmPassword(e.target.value)
+                validateConfirmPassword(e.target.value)
+              }}
+              placeholder="비밀번호를 다시 입력하세요"
+            />
+            <div className="passwordIcon" onClick={() => setHide([hide[0], !hide[1]])}>
+              {hide[1] ? <AiFillEyeInvisible /> : <AiFillEye />}
+            </div>
           </div>
+          {/* 비밀번호 확인 에러 메시지 */}
+          {errors.confirmPassword && (
+            <div className="errorMessageWrap">{errors.confirmPassword}</div>
+          )}
         </div>
-        {/* 비밀번호 확인 에러 메시지 */}
-        {errors.confirmPassword && (
-          <div className="errorMessageWrap">{errors.confirmPassword}</div>
-        )}
 
         <div>
           <button

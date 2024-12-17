@@ -5,6 +5,10 @@ export interface ILetter extends Document {
   content: string;
   decorationType: string;
   isPrivate: boolean;
+  position: {
+    x: number;
+    y: number;
+  };
 }
 
 export interface IUser extends Document {
@@ -25,6 +29,10 @@ const LetterSchema: Schema = new Schema(
     content: { type: String, required: true },
     decorationType: { type: String, required: true },
     isPrivate: { type: Boolean, required: true, default: false },
+    position: {
+      x: { type: Number, required: true, default: 0 },
+      y: { type: Number, required: true, default: 0 },
+    },
   },
   { timestamps: true }
 );
